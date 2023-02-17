@@ -1,8 +1,8 @@
 import pandas as pd
 
-restaurantes = pd.read_csv("../dataset/restaurantes.csv")
-clubes = pd.read_csv("../dataset/clubes.csv")
-automoveis = pd.read_csv("../dataset/automoveis.csv")
+restaurantes = pd.read_csv("../dataset/restaurantes.csv",encoding="utf8")
+clubes = pd.read_csv("../dataset/clubes.csv",encoding="utf8")
+automoveis = pd.read_csv("../dataset/automoveis.csv",encoding="utf8")
 
 restaurantes = restaurantes.sort_values('nome')
 clubes = clubes.sort_values('nome' )
