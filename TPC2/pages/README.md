@@ -1,0 +1,1 @@
+This is the folder where the python script will put the generated .html files
