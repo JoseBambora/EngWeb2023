@@ -39,7 +39,6 @@ var meuServer = http.createServer(function (req,res) {
     }
     else
     {
-        res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'});
         res.write("<p>Página não existe</p>")
         res.end()
     }
