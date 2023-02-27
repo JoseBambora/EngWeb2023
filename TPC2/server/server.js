@@ -7,11 +7,10 @@ function writeHtmlPage(page, res)
     filename = page + '.html'
     fs.readFile('../pages/' + filename, function (err, data) 
     {
-        res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'});
         if(err)
         {
-            console.log('Ficheiro não existe')
-            res.write("Erro na leitura " + err)
+            console.log('Ficheiro não existe ' + err)
+            res.write("Página não existe")
         }
         else
         {
@@ -27,6 +26,7 @@ function writeHtmlPage(page, res)
 var meuServer = http.createServer(function (req,res) {
     var pedido = url.parse(req.url,true).pathname
     console.log(req.method + " " + req.url)
+    res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'});
     if(pedido == '/' || pedido == '/index')
     {
         console.log('Pedido index')
@@ -36,6 +36,12 @@ var meuServer = http.createServer(function (req,res) {
     {
         console.log('Pedido página')
         writeHtmlPage(pedido.substring(1),res)
+    }
+    else
+    {
+        res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'});
+        res.write("<p>Página não existe</p>")
+        res.end()
     }
 })
 
