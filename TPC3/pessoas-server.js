@@ -4,6 +4,14 @@ const utf8 = require('utf8');
 const mypages = require('./mypages')
 const axios = require('axios')
 
+function ordenaPessoas(pessoas)
+{
+    pessoas.sort((a, b) =>
+    {
+        return a.nome.localeCompare(b.nome)
+    });
+}
+
 var opcoes = [
                 {'link':"http://localhost:7777/pessoas", 'name':'Listam de pessoas'},
                 {'link':"http://localhost:7777/distsex", 'name':"Distribuição por sexo"},
@@ -34,13 +42,7 @@ http.createServer(function (req,res){
             .then(result =>
             {
                 var pessoas = result.data
-                pessoas.sort((a, b) =>
-                {
-                    var k = 1;
-                    if(ord)
-                        k = -1;
-                    return k * a.nome.localeCompare(b.nome)
-                });
+                ordenaPessoas(pessoas)
                 var frase = "Recuperei " + pessoas.length + " registos."
                 console.log(frase)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
@@ -61,6 +63,7 @@ http.createServer(function (req,res){
             {
                 console.log('Pedido de top 10 profissões')
                 var pessoas = result.data
+                ordenaPessoas(pessoas)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
                 res.end(mypages.getTop10Jobs(pessoas,d))
             })
@@ -100,6 +103,7 @@ http.createServer(function (req,res){
             {
                 console.log('Pedido de distribuição por sexo')
                 var pessoas = result.data
+                ordenaPessoas(pessoas)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
                 res.end(mypages.getDistSexo(pessoas,d))
             })
@@ -117,6 +121,7 @@ http.createServer(function (req,res){
             {
                 console.log('Pedido de distribuição por desporto')
                 var pessoas = result.data
+                ordenaPessoas(pessoas)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
                 res.end(mypages.getDistSport(pessoas,d))
             })
@@ -137,6 +142,7 @@ http.createServer(function (req,res){
                 var sex = decodeURIComponent(req.url.substring(13))
                 console.log('Pedido de pessoas do sexo '+ sex)
                 var pessoas = result.data
+                ordenaPessoas(pessoas)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
                 res.end(mypages.getPeopleSex(pessoas,d,sex))
             })
@@ -157,6 +163,7 @@ http.createServer(function (req,res){
                 var sport = decodeURIComponent(req.url.substring(15))
                 console.log('Pedido de pessoas que praticam ' + sport)
                 var pessoas = result.data
+                ordenaPessoas(pessoas)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
                 res.end(mypages.getPeopleSport(pessoas,d,sport))
             })
@@ -176,6 +183,7 @@ http.createServer(function (req,res){
                 var job = decodeURIComponent(req.url.substring(13))
                 console.log('Pedido de pessoas cujo trabalho é ' + job)
                 var pessoas = result.data
+                ordenaPessoas(pessoas)
                 res.writeHead(200, {'Content-Type': 'text/html; charset="utf-8'})
                 res.end(mypages.getPeopleProf(pessoas,d,job))
             })

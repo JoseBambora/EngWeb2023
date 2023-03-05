@@ -123,18 +123,24 @@ exports.getOptionsPage = function(listaOpcoes,date)
 
 exports.getDistSexo = function(lista,date)
 {
-    var contagem = 
+    var contagem1 = 
     {
         'masculino':0,
         'feminino':0,
         'outro':0
     }
-    lista.forEach(elem => contagem[elem.sexo]++)
+    lista.forEach(elem => contagem1[elem.sexo]++)
     total = 0
-    for(let sex in contagem)
+    for(let sex in contagem1)
     {
-        total += contagem[sex]
+        total += contagem1[sex]
     }
+    contagem = []
+    for(let sport in contagem1)
+    {
+        contagem.push([sport,contagem1[sport]])
+    }
+    contagem.sort(function (e1,e2) {return e2[1]-e1[1]})
     var pagHtml = `
 <!DOCTYPE html>
 <html>
@@ -155,13 +161,14 @@ exports.getDistSexo = function(lista,date)
                         <th>Quantidade</th>
                         <th>Probabilidade</th>
                     </tr>`
-    for(let sexo in contagem)
+    for(let i = 0; i < contagem.length; i++)
     {
-        var valor = contagem[sexo]
+        var s = contagem[i][0]
+        var valor = contagem[i][1]
         var pro = Math.round(valor/total * 100 * 100) / 100
         pagHtml += `
                     <tr>
-                        <td><a href="http://localhost:7777/pessoas/sex/${sexo}">${sexo}</a></td>
+                        <td><a href="http://localhost:7777/pessoas/sex/${s}">${s}</a></td>
                         <td>${valor}</td>
                         <td>${pro}%</td>
                     </tr>
@@ -182,21 +189,27 @@ exports.getDistSexo = function(lista,date)
 
 exports.getDistSport = function(lista,date)
 {
-    var contagem = {}
+    var contagem1 = {}
     lista.forEach(elem => 
     {
         elem.desportos.forEach(des => 
         {
-            if(!(des in contagem))
-                contagem[des] = 0; 
-            contagem[des]++
+            if(!(des in contagem1))
+                contagem1[des] = 0; 
+            contagem1[des]++
         })
     })
     total = 0
-    for(let des in contagem)
+    for(let des in contagem1)
     {
-        total += contagem[des]
+        total += contagem1[des]
     }
+    contagem = []
+    for(let sport in contagem1)
+    {
+        contagem.push([sport,contagem1[sport]])
+    }
+    contagem.sort(function (e1,e2) {return e2[1]-e1[1]})
     var pagHtml = `
 <!DOCTYPE html>
 <html>
@@ -217,13 +230,14 @@ exports.getDistSport = function(lista,date)
                         <th>Quantidade</th>
                         <th>Probabilidade</th>
                     </tr>`
-    for(let des in contagem)
+    for(let i = 0; i < contagem.length; i++)
     {
-        var valor = contagem[des]
+        var s = contagem[i][0]
+        var valor = contagem[i][1]
         var pro = Math.round(valor/total * 100 * 100) / 100
         pagHtml += `
                     <tr>
-                        <td><a href="http://localhost:7777/pessoas/sport/${des}">${des}</a></td>
+                        <td><a href="http://localhost:7777/pessoas/sport/${s}">${s}</a></td>
                         <td>${valor}</td>
                         <td>${pro}%</td>
                     </tr>
