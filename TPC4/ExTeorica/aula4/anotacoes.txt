@@ -1,0 +1,6 @@
+utilizadores poderem fazer upload das próprias fotos
+
+criar função, que vai à pasta public e vai buscar os ficheiros e faz match na função staticResource
+static.js
+
+preparar serverstaticresource para as extenções (.css .ico)
