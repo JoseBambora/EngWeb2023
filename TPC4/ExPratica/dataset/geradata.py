@@ -31,7 +31,7 @@ l = len(tas)
 for i in range(0,10000):
     t = {
         'id': f't{i}',
-        'who': f'name{i%100}',
+        'who': f'u{i%100}',
         'what': tas[i%l],
     }
     if i % 2 == 0:

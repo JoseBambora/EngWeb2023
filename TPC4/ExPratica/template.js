@@ -1,13 +1,14 @@
 function formUser()
 {
+    // 225px
     return `
-    <form class="w3-container" method="POST">
-        <fieldset>
+    <form class="w3-container w3-padding" method="POST">
+        <fieldset class="w3-light-grey">
             <legend>Form Utilizador</legend>
             <label>ID</label>
-            <input class="w3-input w3-round" type="text" name="id"/>
+            <input class="w3-input w3-round-large w3-grey" type="text" name="id"/>
             <label>Nome</label>
-            <input class="w3-input w3-round" type="text" name="name"/>
+            <input class="w3-input w3-round-large w3-grey" type="text" name="nome"/>
         </fieldset>
         <br/>
         <button class="w3-btn w3-round-xlarge w3-red" type="submit">Register User</button>
@@ -17,25 +18,36 @@ function formUser()
 
 function formTask(listUser)
 {
-    return `
+    pagHtml = `
     <form class="w3-container" method="POST">
-        <fieldset>
+        <fieldset class="w3-light-grey">
             <legend>Form Tarefas</legend>
             <label>ID</label>
-            <input class="w3-input w3-round" type="text" name="id"/>
+            <input class="w3-input w3-round w3-grey" type="text" name="id"/>
             <label>Quem</label>
-            <input class="w3-input w3-round" type="text" name="who"/>
+            <select class="w3-select w3-round w3-grey" name="who">`
+    for(const user of listUser)
+    {
+        pagHtml += `
+            <option value="${user.id}">${user.nome}</option>
+        `    
+    }
+    
+    pagHtml += `
+            </select> 
             <label>O quê</label>
-            <input class="w3-input w3-round" type="text" name="what"/>
+            <input class="w3-input w3-round w3-grey" type="text" name="what"/>
         </fieldset>
         <br/>
         <button class="w3-btn w3-round-xlarge w3-red" type="submit">Register Task</button>
     </form>
     `
+    return pagHtml
 }
 
-function showTasks(lt, b)
+function showTasks(lt, b, users)
 {
+    lt.sort((n1,n2) => users[n1.who].localeCompare(users[n2.who]))
     pagHtml = `
     <table class="w3-table w3-striped w3-bordered w3-centered">
         <tr class="w3-red">
@@ -51,7 +63,7 @@ function showTasks(lt, b)
         pagHtml += `
         <tr>
             <td>${elem.id}</td>
-            <td>${elem.who}</td>
+            <td>${users[elem.who]}</td>
             <td>${elem.what}</td>`
         if(b)
             pagHtml += `
@@ -66,29 +78,23 @@ function showTasks(lt, b)
 }
 
 
-function showTasksTODO(listTasks)
+function showTasksTODO(listTasks,users)
 {
     const lt = listTasks.filter(elem => elem.done == undefined)
-    return showTasks(lt,true)
-    /*`
-    <ul class="w3-ul w3-border">
-        <li class="w3-red"><h2>Tarefas a fazer </h2></li>
-        <li>  </li>
-        <li>Sei la <button class="w3-btn w3-round-xlarge w3-black" href="/">Done</button> <button class="w3-btn w3-round-xlarge w3-black" href="/">Edit</button> </li>
-        <li>Sei la <button class="w3-btn w3-round-xlarge w3-black" href="/">Done</button> <button class="w3-btn w3-round-xlarge w3-black" href="/">Edit</button> </li>
-    </ul>
-    `
-    */
+    return showTasks(lt,true,users)
 }
 
-function showTasksDone(listTasks)
+function showTasksDone(listTasks,users)
 {
     const lt = listTasks.filter(elem => elem.done != undefined)
-    return showTasks(lt,false)
+    return showTasks(lt,false,users)
 }
 
-exports.editTask = function editTask(task)
+exports.editTask = function editTask(task,listUser)
 {
+    var users = {}
+    for(const u of listUser)
+        users[u.id] = u.nome
     pagHtml = `
     <!DOCTYPE html>
     <html>
@@ -100,18 +106,38 @@ exports.editTask = function editTask(task)
         </head>
         <body>
         <div class="w3-card-4">
+        <header class="w3-container w3-red">
+            <h1>Editar Tarefa</h1>
+        </header>
         <form class="w3-container" method="POST">
-            <fieldset>
-                <legend>Form Tarefas</legend>
+            <fieldset class="w3-light-grey">
+                <legend>Editar Tarefa</legend>
                 <label>ID</label>
-                <input class="w3-input w3-round" type="text" name="id" value="${task.id}" readonly/>
+                <input class="w3-input w3-round w3-grey" type="text" name="id" value="${task.id}" readonly/>
                 <label>Quem</label>
-                <input class="w3-input w3-round" type="text" name="who" value="${task.who}"/>
-                <label>O quê</label>
-                <input class="w3-input w3-round" type="text" name="what" value="${task.what}"/>
+                <select class="w3-select w3-round w3-grey" name="who">`
+    for(const user of listUser)
+    {
+        if (user.id != task.who)
+        {
+            pagHtml += `
+            <option value="${user.id}">${user.nome}</option>
+        `    
+        }
+        else
+        {
+            pagHtml += `
+            <option value="${user.id}" selected>${user.nome}</option>
+        `    
+        }
+    }
+    pagHtml += `
+            </select> <label>O quê</label>
+                <input class="w3-input w3-round w3-grey" type="text" name="what" value="${task.what}"/>
             </fieldset>
             <br/>
             <button class="w3-btn w3-round-xlarge w3-red" type="submit">Edit Task</button>
+            <a class="w3-btn w3-round-xlarge w3-red" href="/">Voltar</a>
         </form>
         </div>
         </body>
@@ -121,6 +147,9 @@ exports.editTask = function editTask(task)
 
 exports.showPage = function showPage(listusers,listtasks)
 {   
+    var users = {}
+    for(const u of listusers)
+        users[u.id] = u.nome
     pagHtml = `
     <!DOCTYPE html>
     <html>
@@ -131,32 +160,33 @@ exports.showPage = function showPage(listusers,listtasks)
             <title>Student Management</title>
         </head>
         <body>
-        <div class="w3-card-4">
-            <header class="w3-container w3-amber">
-                <h1>Gestor de tarefas</h1>
-            </header>
-            <table>
-                <tr >
-                    <td>`
+        <header class="w3-container w3-red">
+            <h1>Gestor de tarefas</h1>
+        </header>
+        <div class="w3-container">
+            <div class="w3-cell-row">
+                <div class="w3-cell" style="width:60%">`
     pagHtml += formTask(listusers)
     pagHtml += `
-                    </td>
-                    <td>`
+                </div>
+                <div class="w3-cell" style="width:40%"> `
     pagHtml += formUser()
     pagHtml += `
-                    </td>
-                </tr>
-                <tr>
-                    <td valign="top">`
-    pagHtml += showTasksTODO(listtasks)
+                </div>
+            </div>
+            <br />
+            <div class="w3-cell-row">
+                <div class="w3-cell"  style="width:45%">`
+    pagHtml += showTasksTODO(listtasks,users)
+    pagHtml += `</div>
+                <div class="w3-cell"  style="width:10%">
+                </div>
+                <div class="w3-cell"  style="width:45%">`
+    pagHtml += showTasksDone(listtasks,users)
     pagHtml += `
-                    </td>
-                    <td valign="top">`
-    pagHtml += showTasksDone(listtasks)
-    pagHtml += `
-                    </td>
-                </tr>
-            </table>
+                </div>
+            </div>
+            </div>
         </body>
     </html>
     `
@@ -165,7 +195,6 @@ exports.showPage = function showPage(listusers,listtasks)
 
 exports.sucessMessage = function sucessMessage(msg)
 {
-
     pagHtml = `
     <!DOCTYPE html>
     <html>
@@ -176,9 +205,14 @@ exports.sucessMessage = function sucessMessage(msg)
             <title>Student Management</title>
         </head>
         <body>
-        <div class="w3-card-4">
-            <p>${msg} realizado com sucess</p>
-            <a class="w3-btn w3-round-xlarge w3-red" href="/">Voltar</a>
+        <div>
+            <header class="w3-container w3-red">
+                <h1>Operação bem sucedida</h1>
+            </header>
+            <div class="w3-container ">
+                <h3>${msg} realizado com sucesso</h3>
+                <a class="w3-btn w3-round-xlarge w3-red" href="/">Voltar</a>
+            </div>
         </div>
         </body>
     </html`

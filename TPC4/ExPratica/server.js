@@ -30,6 +30,7 @@ function getUsers()
     return axios.get("http://localhost:3000/users/")
     .then(res => 
         {
+            res.data.sort((u1,u2) => u1.nome.localeCompare(u2.nome))
             return res.data
         })
 }
@@ -81,7 +82,7 @@ function saveEdit(req,res,task)
             .then( result =>
                 {
                     res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                    res.end(templates.sucessMessage('Edição da task' + task ))           
+                    res.end(templates.sucessMessage('Edição da tarefa ' + task ))           
                 }
             )
         }
@@ -91,11 +92,16 @@ function saveEdit(req,res,task)
 
 function editTask(res,task)
 {
-    axios.get("http://localhost:3000/tasks/" + task)
-    .then( result =>
+    getUsers()
+    .then(users =>
         {
-            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-            res.end(templates.editTask(result.data))
+            axios.get("http://localhost:3000/tasks/" + task)
+            .then( result =>
+                {
+                    res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                    res.end(templates.editTask(result.data,users))
+                }
+            )
         }
     )
     
@@ -111,7 +117,7 @@ function doneTask(res,task)
         .then( ignore =>
             {
                 res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                res.end(templates.sucessMessage('Done da task' + task ))     
+                res.end(templates.sucessMessage('Tarefa ' + task  + ' realizada'))     
             }
         )
     }
@@ -152,13 +158,11 @@ var server = http.createServer(function (req, res) {
                 else if(/\/task\/edit\/.+/.test(req.url))
                 {
                     var task = decodeURIComponent(req.url.split('/')[3])
-                    console.log('Edit task ' +task)
                     editTask(res,task)
                 }
                 else if(/\/task\/done\/.+/.test(req.url))
                 {
                     var task = decodeURIComponent(req.url.split('/')[3])
-                    console.log('Edit done ' + task)
                     doneTask(res,task)
                 }
                 break
