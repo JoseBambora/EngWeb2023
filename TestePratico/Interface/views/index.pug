@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1 Lista de EMD
+  .w3-container
+      table.w3-table-all
+        tr
+          th Nome
+          th Data
+          th Género
+          th Idade
+          th Resultado
+        each exame in dados
+          tr.tr(id=exame._id)
+            td= exame.nome
+            td= exame.dataEMD
+            td= exame.género 
+            td= exame.idade 
+            td= exame.resultado

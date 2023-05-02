@@ -1,0 +1,6 @@
+#1 db.exames.find().size()
+#2 db.exames.find({resultado:true}).size()
+#3 db.exames.aggregate([{$group:{_id:'$género',count:{$sum:1}}}])
+#4 db.exames.aggregate([{$group:{_id:'$modalidade',count:{$sum:1}}}])
+#5 db.exames.find({federado:true,clube:'GDGoma'}).size()
+#6 db.exames.find({género:'F',modalidade:'Triatlo'}).size()
